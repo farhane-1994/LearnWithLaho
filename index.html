@@ -3,26 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learn English</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>PDF to Excel Converter</title>
 </head>
 <body>
-    <header>
-        <h1>Learn English</h1>
-    </header>
-    <nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="lessons.html">Lessons</a></li>
-            <!-- You can add more links here -->
-        </ul>
-    </nav>
-    <main>
-        <h2>Welcome to Learn English!</h2>
-        <p>Start your journey to fluency with our interactive lessons.</p>
-    </main>
-    <footer>
-        <p>&copy; 2024 Learn English</p>
-    </footer>
+    <h1>PDF to Excel Converter</h1>
+    <input type="file" id="pdfFile" accept=".pdf">
+    <button onclick="convertToExcel()">Convert to Excel</button>
+    <div id="excelDownloadLink" style="display:none;">
+        <h2>Download Excel:</h2>
+        <a id="downloadLink" href="#" download="converted_excel.xlsx">Download</a>
+    </div>
+
+    <script>
+        function convertToExcel() {
+            const fileInput = document.getElementById('pdfFile');
+            const file = fileInput.files[0];
+            
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('https://v2.convertapi.com/pdf/to/xlsx?Secret=YOUR_SECRET_KEY', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.getElementById('downloadLink');
+                a.href = url;
+                document.getElementById('excelDownloadLink').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to convert PDF to Excel.');
+            });
+        }
+    </script>
 </body>
 </html>

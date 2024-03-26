@@ -4,43 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF to Excel Converter</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.16.0/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx-populate/3.11.1/xlsx-populate.min.js"></script>
 </head>
 <body>
     <h1>PDF to Excel Converter</h1>
-    <form id="pdfForm">
-        <input type="file" id="pdfFile" accept=".pdf">
-        <button type="submit">Convert to Excel</button>
-    </form>
-    <div id="excelDownloadLink" style="display:none;">
-        <h2>Download Excel:</h2>
-        <a id="downloadLink" href="#" download="converted_excel.xlsx">Download</a>
-    </div>
+    <input type="file" id="pdfFile" accept=".pdf">
+    <button onclick="convertToExcel()">Convert to Excel</button>
 
     <script>
-        document.getElementById('pdfForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+        async function convertToExcel() {
             const fileInput = document.getElementById('pdfFile');
             const file = fileInput.files[0];
             
-            const formData = new FormData();
-            formData.append('file', file);
+            // قراءة ملف PDF
+            const reader = new FileReader();
+            reader.readAsArrayBuffer(file);
+            reader.onload = async () => {
+                const pdfData = reader.result;
+                const pdfDoc = await pdfLib.PDFDocument.load(new Uint8Array(pdfData));
+                
+                // إنشاء ملف Excel
+                const wb = await xlsxPopulate.fromBlankAsync();
+                const ws = wb.sheet(0);
+                
+                // استخراج النص من الصفحات في ملف PDF وإدراجه في ملف Excel
+                let row = 1;
+                pdfDoc.getPages().forEach(page => {
+                    const text = page.getText();
+                    text.split('\n').forEach((line, index) => {
+                        ws.cell(row + index, 1).value(line);
+                    });
+                    row += text.split('\n').length;
+                });
 
-            fetch('https://v2.convertapi.com/pdf/to/xlsx?Secret=YOUR_SECRET_KEY', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.blob())
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.getElementById('downloadLink');
-                a.href = url;
-                document.getElementById('excelDownloadLink').style.display = 'block';
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to convert PDF to Excel.');
-            });
-        });
+                // تنزيل الملف المحول
+                const excelBlob = await wb.outputAsync();
+                const downloadLink = document.createElement('a');
+                downloadLink.href = window.URL.createObjectURL(new Blob([excelBlob], { type: 'application/octet-stream' }));
+                downloadLink.download = 'converted_excel.xlsx';
+                downloadLink.click();
+            };
+        }
     </script>
 </body>
 </html>

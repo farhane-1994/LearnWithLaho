@@ -7,15 +7,18 @@
 </head>
 <body>
     <h1>PDF to Excel Converter</h1>
-    <input type="file" id="pdfFile" accept=".pdf">
-    <button onclick="convertToExcel()">Convert to Excel</button>
+    <form id="pdfForm">
+        <input type="file" id="pdfFile" accept=".pdf">
+        <button type="submit">Convert to Excel</button>
+    </form>
     <div id="excelDownloadLink" style="display:none;">
         <h2>Download Excel:</h2>
         <a id="downloadLink" href="#" download="converted_excel.xlsx">Download</a>
     </div>
 
     <script>
-        function convertToExcel() {
+        document.getElementById('pdfForm').addEventListener('submit', function(event) {
+            event.preventDefault();
             const fileInput = document.getElementById('pdfFile');
             const file = fileInput.files[0];
             
@@ -37,7 +40,7 @@
                 console.error('Error:', error);
                 alert('Failed to convert PDF to Excel.');
             });
-        }
+        });
     </script>
 </body>
 </html>

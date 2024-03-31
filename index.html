@@ -3,49 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF to Excel Converter</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.16.0/pdf-lib.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx-populate/3.11.1/xlsx-populate.min.js"></script>
+    <title>English Learning Website</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>PDF to Excel Converter</h1>
-    <input type="file" id="pdfFile" accept=".pdf">
-    <button onclick="convertToExcel()">Convert to Excel</button>
-
-    <script>
-        async function convertToExcel() {
-            const fileInput = document.getElementById('pdfFile');
-            const file = fileInput.files[0];
-            
-            // قراءة ملف PDF
-            const reader = new FileReader();
-            reader.readAsArrayBuffer(file);
-            reader.onload = async () => {
-                const pdfData = reader.result;
-                const pdfDoc = await pdfLib.PDFDocument.load(new Uint8Array(pdfData));
-                
-                // إنشاء ملف Excel
-                const wb = await xlsxPopulate.fromBlankAsync();
-                const ws = wb.sheet(0);
-                
-                // استخراج النص من الصفحات في ملف PDF وإدراجه في ملف Excel
-                let row = 1;
-                pdfDoc.getPages().forEach(page => {
-                    const text = page.getText();
-                    text.split('\n').forEach((line, index) => {
-                        ws.cell(row + index, 1).value(line);
-                    });
-                    row += text.split('\n').length;
-                });
-
-                // تنزيل الملف المحول
-                const excelBlob = await wb.outputAsync();
-                const downloadLink = document.createElement('a');
-                downloadLink.href = window.URL.createObjectURL(new Blob([excelBlob], { type: 'application/octet-stream' }));
-                downloadLink.download = 'converted_excel.xlsx';
-                downloadLink.click();
-            };
-        }
-    </script>
+    <header>
+        <h1>English Learning Website</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#lesson1">Lesson 1: Introduction</a></li>
+            <li><a href="#lesson2">Lesson 2: Basic Vocabulary</a></li>
+            <li><a href="#lesson3">Lesson 3: Grammar Basics</a></li>
+            <!-- Add links for the rest of the lessons -->
+        </ul>
+    </nav>
+    <main>
+        <section id="lesson1">
+            <h2>Lesson 1: Introduction</h2>
+            <p>Welcome to our English learning course. In this lesson, we'll introduce you to the basics of the English language.</p>
+            <!-- Add content for the first lesson -->
+            <p>This lesson will cover:</p>
+            <ul>
+                <li>Introduction to English language</li>
+                <li>Importance of learning English</li>
+                <li>Basic greetings and expressions</li>
+            </ul>
+        </section>
+        <section id="lesson2">
+            <h2>Lesson 2: Basic Vocabulary</h2>
+            <p>In this lesson, you'll learn some basic English vocabulary words that are commonly used in daily conversations.</p>
+            <!-- Add content for the second lesson -->
+            <p>This lesson will cover:</p>
+            <ul>
+                <li>Common nouns and verbs</li>
+                <li>Numbers and counting</li>
+                <li>Colors and shapes</li>
+            </ul>
+        </section>
+        <section id="lesson3">
+            <h2>Lesson 3: Grammar Basics</h2>
+            <p>This lesson covers the fundamental grammar rules of the English language, including sentence structure and verb tenses.</p>
+            <!-- Add content for the third lesson -->
+            <p>This lesson will cover:</p>
+            <ul>
+                <li>Subject-verb agreement</li>
+                <li>Punctuation rules</li>
+                <li>Present tense, past tense, and future tense</li>
+            </ul>
+        </section>
+        <!-- Add sections for the rest of the lessons -->
+    </main>
+    <footer>
+        <p>&copy; 2024 English Learning Website. All rights reserved.</p>
+    </footer>
+    <script src="script.js"></script>
 </body>
 </html>
